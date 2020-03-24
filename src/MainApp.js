@@ -35,7 +35,8 @@ class MainApp extends React.Component {
             title: "Lunch with Jimothy",
             location: "Canteen", 
         }
-    ]
+    ],
+    modal: false
     };
     }
 
@@ -59,6 +60,34 @@ class MainApp extends React.Component {
         this.setState({ events });
     }
 
+    toggleModal = () => {
+        this.setState({ modal: !this.state.modal});
+    };
+
+    handleInputChange = inputName => value => {
+        const nextValue = value;
+        this.setState({[inputName]: nextValue});
+    };
+
+    addEvent = () => {
+        var newArray = [...this.state.events];
+        newArray.push({
+            id: newArray.length ? newArray[newArray.length - 1].id +1 : 1,
+            time: this.state.time,
+            title: this.state.title,
+            location: this.state.location,
+            description: this.state.description,
+            value: this.var > 5 ? "It's greater than 5" : "It's lower or equal to 5"
+        });
+        this.setState({ events: newArray });
+        this.setState({
+            time: "",
+            title: "",
+            location: "",
+            description: ""
+        });
+    };
+
     render() {
     return (
         <React.Fragment>
@@ -79,6 +108,16 @@ class MainApp extends React.Component {
                     />
                     ))}
                 </div>
+                <MDBRow className="mb-4">
+                    <MDBCol xl="3" md="6" className="mx-auto text-center">
+                        <MDBBtn 
+                            color="info"
+                            rounded
+                            onClick={this.toggleModal}>
+                                Add Event
+                        </MDBBtn>
+                    </MDBCol>
+                </MDBRow>
             </MDBCol>
                 <MDBCol md="3">
                         <h3 className="text-uppercase my-3">Schedule</h3>
@@ -103,6 +142,60 @@ class MainApp extends React.Component {
                 </MDBCol>
             </MDBRow>
         </MDBContainer>
+
+        {/* Modale Code Below */}
+        <MDBModal isOpen={this.state.modal} toggle={this.toggleModal}>
+            <MDBModalHeader
+                className="text-center"
+                titleClass="w-100 font-weight-bold"
+                toggle="{this.toddleModal">
+                    Add New Event
+                </MDBModalHeader>
+                <MDBModalBody>
+                    <form className="mx-3 grey-text">
+                        <MDBInput
+                            name="time"
+                            label="Time"
+                            icon="clock"
+                            hint="12:30"
+                            grouptype="text"
+                            getValue={this.handleInputChange("time")}
+                        />
+                        <MDBInput
+                            name="title"
+                            label="Title"
+                            icon="edit"
+                            hint="Briefing"
+                            grouptype="text"
+                            getValue={this.handleInputChange("title")}
+                        />
+                        <MDBInput
+                            name="location"
+                            label="Location (optional)"
+                            icon="map"
+                            grouptype="text"
+                            getValue={this.handleInputChange("location")}
+                        />
+                        <MDBInput
+                            name="description"
+                            label="Description"
+                            icon="sticky-note"
+                            grouptype="text"
+                            getValue={this.handleInputChange("description")}
+                        />
+                    </form>
+                </MDBModalBody>
+                <MDBModalFooter className="justify-content-center">
+                    <MDBBtn
+                        color="info"
+                        onClick={() => {
+                            this.toggleModal();
+                            this.addEvent();
+                        }}>
+                            Add
+                        </MDBBtn>
+                </MDBModalFooter>
+        </MDBModal>
         </React.Fragment>
     )
     }
